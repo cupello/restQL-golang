@@ -42,7 +42,7 @@ func (e Executor) DoStatement(ctx context.Context, statement domain.Statement, q
 	response, err := e.client.Do(ctx, request)
 	if err != nil {
 		errorResponse := NewErrorResponse(err, request, response, drOptions)
-		log.Debug("request execution failed", "error", err, "resource", statement.Resource, "method", statement.Method, "response", errorResponse)
+		log.Warn("request execution failed", "error", err, "resource", statement.Resource, "method", statement.Method, "response", errorResponse)
 		return errorResponse
 	}
 
