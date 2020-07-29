@@ -105,7 +105,7 @@ func (nc *nativeHttpClient) Do(ctx context.Context, request domain.HttpRequest) 
 	if err != nil {
 		if err, ok := err.(net.Error); ok && err.Timeout() {
 			errorResponse := makeErrorResponse(requestUrl, duration, http.StatusRequestTimeout)
-			log.Warn("request timed out", "url", requestUrl, "method", request.Method, "duration-ms", duration.Milliseconds())
+			log.Warn("request timed out", "url", requestUrl, "target", req.URL.Host, "method", request.Method, "duration-ms", duration.Milliseconds())
 
 			nc.pluginManager.RunAfterRequest(ctx, request, errorResponse, domain.ErrRequestTimeout)
 
@@ -113,7 +113,7 @@ func (nc *nativeHttpClient) Do(ctx context.Context, request domain.HttpRequest) 
 		}
 
 		errorResponse := makeErrorResponse(requestUrl, duration, defaultStatusCode)
-		log.Error("request finished with error", err, "url", requestUrl, "method", request.Method, "duration-ms", duration.Milliseconds())
+		log.Error("request finished with error", err, "url", requestUrl, "target", req.URL.Host, "method", request.Method, "duration-ms", duration.Milliseconds())
 
 		nc.pluginManager.RunAfterRequest(ctx, request, errorResponse, err)
 		return errorResponse, err
