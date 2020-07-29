@@ -198,7 +198,7 @@ func (nc *nativeHttpClient) unmarshalBody(log restql.Logger, response *http.Resp
 
 	bodyByte, readErr := ioutil.ReadAll(response.Body)
 	if readErr != nil {
-		log.Error("failed to read response body", readErr, "target", target, "statusCode", response.StatusCode)
+		log.Error("failed to read response body", readErr, "target", target, "statusCode", response.StatusCode, "rawQuery", response.Request.URL.RawQuery)
 		return nil, readErr
 	}
 
@@ -206,7 +206,7 @@ func (nc *nativeHttpClient) unmarshalBody(log restql.Logger, response *http.Resp
 		body := string(bodyByte)
 		err := errors.New("invalid json")
 
-		log.Error("invalid json as body", err, "body", body, "target", target, "statusCode", response.StatusCode)
+		log.Error("invalid json as body", err, "body", body, "target", target, "statusCode", response.StatusCode, "rawQuery", response.Request.URL.RawQuery)
 
 		return body, nil
 	}
@@ -215,7 +215,7 @@ func (nc *nativeHttpClient) unmarshalBody(log restql.Logger, response *http.Resp
 	err := json.Unmarshal(bodyByte, &responseBody)
 	if err != nil {
 		body := string(bodyByte)
-		log.Error("failed to unmarshal response body", err, "body", body, "target", target, "statusCode", response.StatusCode)
+		log.Error("failed to unmarshal response body", err, "body", body, "target", target, "statusCode", response.StatusCode, "rawQuery", response.Request.URL.RawQuery)
 
 		return body, nil
 	}
