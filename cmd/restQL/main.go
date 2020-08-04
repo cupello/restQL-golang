@@ -3,6 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
+	"time"
+
 	"github.com/b2wdigital/restQL-golang/internal/platform/conf"
 	"github.com/b2wdigital/restQL-golang/internal/platform/logger"
 	"github.com/b2wdigital/restQL-golang/internal/platform/web"
@@ -10,11 +16,6 @@ import (
 	"github.com/valyala/fasthttp"
 	_ "go.uber.org/automaxprocs"
 	"golang.org/x/sync/errgroup"
-	"os"
-	"os/signal"
-	"runtime"
-	"syscall"
-	"time"
 )
 
 func main() {
@@ -27,6 +28,8 @@ func main() {
 var build string
 
 func start() error {
+	_ = make([]byte, 200<<20)
+
 	//// =========================================================================
 	//// Config
 	startupStart := time.Now()
@@ -41,11 +44,11 @@ func start() error {
 		runtime.SetBlockProfileRate(1)
 	}
 	log := logger.New(os.Stdout, logger.LogOptions{
-		Enable:    cfg.Logging.Enable,
-		TimestampFieldName: cfg.Logging.TimestampFieldName,
+		Enable:               cfg.Logging.Enable,
+		TimestampFieldName:   cfg.Logging.TimestampFieldName,
 		TimestampFieldFormat: cfg.Logging.TimestampFieldFormat,
-		Level:     cfg.Logging.Level,
-		Format:    cfg.Logging.Format,
+		Level:                cfg.Logging.Level,
+		Format:               cfg.Logging.Format,
 	})
 	//// =========================================================================
 	//// Start API
