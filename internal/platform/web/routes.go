@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"github.com/b2wdigital/restQL-golang/v4/pkg/restql"
 	"net/http"
 
@@ -50,6 +51,9 @@ func API(log restql.Logger, cfg *conf.Config) (fasthttp.RequestHandler, error) {
 		cache.WithRefreshQueueLength(cfg.Cache.Mappings.RefreshQueueLength),
 	)
 	cacheMr := cache.NewMappingsReaderCache(log, tenantCache)
+
+	// we can force mappings evaluation at start
+	cacheMr.FromTenant(context.Background(), cfg.Tenant)
 
 	qr := persistence.NewQueryReader(log, cfg.Queries, db)
 	queryCache := cache.New(log, cfg.Cache.Query.MaxSize, cache.QueryCacheLoader(qr))
